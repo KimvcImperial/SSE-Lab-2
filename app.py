@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 
-# Two blank lines after imports
+
 app = Flask(__name__)
 
 
@@ -16,4 +16,7 @@ def submit():
     return render_template("hello.html", name=input_name, age=input_age)
 
 
-# Two blank lines before following code (if any)
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
