@@ -86,13 +86,7 @@ def query():
 
 
 
-<<<<<<< HEAD
 
-
-
-
-=======
->>>>>>> 0ac1675037e71696e694ac3ce935c3c444ab92a4
 """from flask import Flask, render_template, request
 
 app = Flask(__name__)
