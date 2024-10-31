@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 import re
 
 app = Flask(__name__)
@@ -18,44 +18,52 @@ def is_prime(n):
         i += 6
     return True
 
-def process_query(q):
-    if q == "dinosaurs":
-        return "Dinosaurs ruled the Earth 200 million years ago"
+def process_query(query):
+    if query == "dinosaurs":
+        ans = "Dinosaurs ruled the Earth 200 million years ago"
+    elif query == "asteroids":
+        ans = "Unknown"
     
-    elif q == "asteroids":
-        return "Asteroids are small rocky bodies orbiting the sun"
+    elif "plus" in query:
+        numbers = list(map(int, re.findall(r"\d+", query)))
+        ans = str(sum(numbers)) if numbers else "No valid numbers found."
     
-    elif "plus" in q:
-        numbers = list(map(int, re.findall(r"\d+", q)))
-        return str(sum(numbers)) if numbers else "No valid numbers found."
+    elif "largest" in query:
+        numbers = [float(num) for num in re.findall(r"\d+(?:\.\d+)?", query)]
+        ans = str(max(numbers)) if numbers else "No valid numbers found."
     
-    elif "largest" in q:
-        numbers = [float(num) for num in re.findall(r"\d+(?:\.\d+)?", q)]
-        return str(max(numbers)) if numbers else "No valid numbers found."
-    
-    elif "multiplied" in q:
-        numbers = list(map(int, re.findall(r"\d+", q)))
+    elif "multiplied" in query:
+        numbers = list(map(int, re.findall(r"\d+", query)))
         if len(numbers) == 2:
-            return str(numbers[0] * numbers[1])
-        return "Expected exactly two numbers for multiplication."
+            ans = str(numbers[0] * numbers[1])
+        else:
+            ans = "Expected exactly two numbers for multiplication."
     
-    elif "are primes" in q:
-        numbers = list(map(int, re.findall(r"\d+", q)))
-        primes = [str(num) for num in sorted(numbers) if is_prime(num)]
-        return ", ".join(primes) if primes else "No prime numbers found."
+    elif "both a square and a cube" in query:
+        numbers = [int(num) for num in re.findall(r"\d+", query)]
+        valid_numbers = [str(num) for num in numbers if round(num ** (1 / 6)) ** 6 == num]
+        ans = ", ".join(valid_numbers) if valid_numbers else "No numbers found that are both a square and a cube."
+
+    elif "are primes" in query:
+        numbers = [int(num) for num in re.findall(r"\d+", query)]
+        primes = [str(num) for num in numbers if is_prime(num)]
+        ans = ", ".join(primes) if primes else "No prime numbers found."
     
-    elif "minus" in q:
-        numbers = list(map(int, re.findall(r"\d+", q)))
-        return str(numbers[0] - numbers[1]) if len(numbers) >= 2 else "Two numbers required for subtraction."
+    elif "minus" in query:
+        numbers = list(map(int, re.findall(r"\d+", query)))
+        ans = str(numbers[0] - numbers[1]) if len(numbers) >= 2 else "Two numbers required for subtraction."
     
-    elif "to the power of" in q:
-        numbers = list(map(int, re.findall(r"\d+", q)))
+    elif "to the power of" in query:
+        numbers = list(map(int, re.findall(r"\d+", query)))
         if len(numbers) == 2:
-            return str(numbers[0] ** numbers[1])
-        return "Expected base and exponent for power operation."
+            ans = str(numbers[0] ** numbers[1])
+        else:
+            ans = "Expected base and exponent for power operation."
     
     else:
-        return "Unknown query format."
+        ans = "No query provided"  # Handling unknown queries
+    
+    return f"{ans}"
 
 @app.route("/")
 def hello_world():
@@ -69,9 +77,8 @@ def submit():
 
 @app.route("/query", methods=["GET"])
 def query():
-    q = request.args.get("q")
-    response = process_query(q) if q else "No query provided."
-    return jsonify({"query": q, "response": response})
+    query = request.args.get("q")
+    return process_query(query)
 
 
 
@@ -79,7 +86,7 @@ def query():
 
 
 
-/*from flask import Flask, render_template, request
+"""from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -109,4 +116,4 @@ def submit():
 @app.route("/query", methods=["GET"])
 def query():
     query = request.args.get("q")
-    return process_query(query)*/
+    return process_query(query)"""
