@@ -99,27 +99,27 @@ def query():
     return process_query(query)
 
 
-@app.route('/github')
+@app.route("/github")
 def index():
-    return render_template('indexA.html')
+    return render_template("indexA.html")
 
-@app.route('/greet', methods=['POST'])
+
+@app.route("/greet", methods=["POST"])
 def greet():
-    username = request.form['username']
+    username = request.form["username"]
     response = requests.get(f"https://api.github.com/users/{username}/repos")
-    
+
     if response.status_code == 200:
         repos = response.json()
         repo_data = []
 
         # Fetching commits for each repository
         for repo in repos:
-            repo_info = {
-                "name": repo["full_name"],
-                "commits": []
-            }
-            commits_response = requests.get(f"https://api.github.com/repos/{username}/{repo['name']}/commits")
-            
+            repo_info = {"name": repo["full_name"], "commits": []}
+            commits_response = requests.get(
+                f"https://api.github.com/repos/{username}/{repo['name']}/commits"
+            )
+
             if commits_response.status_code == 200:
                 commits = commits_response.json()
                 for commit in commits:
@@ -127,19 +127,26 @@ def greet():
                         "hash": commit["sha"],
                         "author": commit["commit"]["author"]["name"],
                         "date": commit["commit"]["author"]["date"],
-                        "message": commit["commit"]["message"]
+                        "message": commit["commit"]["message"],
                     }
                     repo_info["commits"].append(commit_info)
 
             repo_data.append(repo_info)
 
-        return render_template("github.html", username=username, repo_data=repo_data)
+        return render_template(
+            "github.html", username=username, repo_data=repo_data
+        )
     else:
-        return render_template("github.html", username=username, repo_data=[], error="User not found or has no repositories.")
+        return render_template(
+            "github.html",
+            username=username,
+            repo_data=[],
+            error="User not found or has no repositories.",
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)
-
 
 
 """from flask import Flask, render_template, request
