@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 import re
+
 import requests
+
 
 app = Flask(__name__)
 
@@ -26,18 +28,22 @@ def process_query(query):
         ans = "Dinosaurs ruled the Earth 200 million years ago"
     elif query == "asteroids":
         ans = "Unknown"
+
     elif "plus" in query:
         numbers = list(map(int, re.findall(r"\d+", query)))
         ans = str(sum(numbers)) if numbers else "No valid numbers found."
+
     elif "largest" in query:
         numbers = [float(num) for num in re.findall(r"\d+(?:\.\d+)?", query)]
         ans = str(max(numbers)) if numbers else "No valid numbers found."
+
     elif "multiplied" in query:
         numbers = list(map(int, re.findall(r"\d+", query)))
         if len(numbers) == 2:
             ans = str(numbers[0] * numbers[1])
         else:
             ans = "Expected exactly two numbers for multiplication."
+
     elif "both a square and a cube" in query:
         numbers = [int(num) for num in re.findall(r"\d+", query)]
         valid_numbers = [
@@ -48,10 +54,12 @@ def process_query(query):
             if valid_numbers
             else "No numbers found that are both a square and a cube."
         )
+
     elif "are primes" in query:
         numbers = [int(num) for num in re.findall(r"\d+", query)]
         primes = [str(num) for num in numbers if is_prime(num)]
         ans = ", ".join(primes) if primes else "No prime numbers found."
+
     elif "minus" in query:
         numbers = list(map(int, re.findall(r"\d+", query)))
         ans = (
@@ -59,12 +67,14 @@ def process_query(query):
             if len(numbers) >= 2
             else "Two numbers required for subtraction."
         )
+
     elif "to the power of" in query:
         numbers = list(map(int, re.findall(r"\d+", query)))
         if len(numbers) == 2:
             ans = str(numbers[0] ** numbers[1])
         else:
             ans = "Expected base and exponent for power operation."
+
     else:
         ans = "No query provided"  # Handling unknown queries
 
@@ -123,9 +133,7 @@ def greet():
 
             repo_data.append(repo_info)
 
-        return render_template(
-            "github.html", username=username, repo_data=repo_data
-        )
+        return render_template("github.html", username=username, repo_data=repo_data)
     else:
         return render_template(
             "github.html",
@@ -137,3 +145,36 @@ def greet():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+"""from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+
+def process_query(query):
+    if query == "dinosaurs":
+        ans = "Dinosaurs ruled the Earth 200 million years ago"
+    elif query == "asteroids":
+        ans = "Unknown"
+    else:
+        ans = "No query provided"
+    return f"{ans}"
+
+
+@app.route("/")
+def hello_world():
+    return render_template("index.html")
+
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    input_name = request.form.get("name")
+    input_age = request.form.get("age")
+    return render_template("hello.html", name=input_name, age=input_age)
+
+
+@app.route("/query", methods=["GET"])
+def query():
+    query = request.args.get("q")
+    return process_query(query)"""
