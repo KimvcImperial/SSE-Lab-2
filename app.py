@@ -4,7 +4,6 @@ import requests
 
 app = Flask(__name__)
 
-
 def is_prime(n):
     """Returns True if n is a prime number, False otherwise."""
     if n <= 1:
@@ -20,15 +19,17 @@ def is_prime(n):
         i += 6
     return True
 
-
 def process_query(query):
     if query == "dinosaurs":
-        ans = "Dinosaurs ruled the Earth 200 million years ago"
+        ans = "Dinosaurs ruled the Earth 200 million years ago."
     elif query == "asteroids":
-        ans = "Unknown"
+        ans = "Unknown."
     elif "plus" in query:
         numbers = list(map(int, re.findall(r"\d+", query)))
-        ans = str(sum(numbers)) if numbers else "No valid numbers found."
+        ans = (
+            str(sum(numbers)) if numbers 
+            else "No valid numbers found."
+        )
     elif "largest" in query:
         numbers = [float(num) for num in re.findall(r"\d+(?:\.\d+)?", query)]
         ans = str(max(numbers)) if numbers else "No valid numbers found."
@@ -41,11 +42,12 @@ def process_query(query):
     elif "both a square and a cube" in query:
         numbers = [int(num) for num in re.findall(r"\d+", query)]
         valid_numbers = [
-            str(num) for num in numbers if round(num ** (1 / 6)) ** 6 == num
+            str(num) for num in numbers 
+            if round(num ** (1 / 6)) ** 6 == num
         ]
         ans = (
             ", ".join(valid_numbers)
-            if valid_numbers
+            if valid_numbers 
             else "No numbers found that are both a square and a cube."
         )
     elif "are primes" in query:
@@ -66,15 +68,13 @@ def process_query(query):
         else:
             ans = "Expected base and exponent for power operation."
     else:
-        ans = "No query provided"  # Handling unknown queries
+        ans = "No query provided."
 
     return f"{ans}"
-
 
 @app.route("/")
 def hello_world():
     return render_template("index.html")
-
 
 @app.route("/submit", methods=["POST"])
 def submit():
@@ -82,22 +82,21 @@ def submit():
     input_age = request.form.get("age")
     return render_template("hello.html", name=input_name, age=input_age)
 
-
 @app.route("/query", methods=["GET"])
 def query():
     query = request.args.get("q")
     return process_query(query)
 
-
 @app.route("/github")
 def index():
     return render_template("indexA.html")
 
-
 @app.route("/greet", methods=["POST"])
 def greet():
     username = request.form["username"]
-    response = requests.get(f"https://api.github.com/users/{username}/repos")
+    response = requests.get(
+        f"https://api.github.com/users/{username}/repos"
+    )
 
     if response.status_code == 200:
         repos = response.json()
@@ -123,11 +122,7 @@ def greet():
 
             repo_data.append(repo_info)
 
-        return render_template(
-            "github.html",
-            username=username,
-            repo_data=repo_data
-        )
+        return render_template("github.html", username=username, repo_data=repo_data)
     else:
         return render_template(
             "github.html",
@@ -135,7 +130,6 @@ def greet():
             repo_data=[],
             error="User not found or has no repositories.",
         )
-
 
 if __name__ == "__main__":
     app.run(debug=True)
