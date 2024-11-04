@@ -106,7 +106,8 @@ def greet():
         for repo in repos:
             repo_info = {"name": repo["full_name"], "commits": []}
             commits_response = requests.get(
-                f"https://api.github.com/repos/{username}/{repo['name']}/commits"
+                f"https://api.github.com/repos/{
+                    username}/{repo['name']}/commits"
             )
 
             if commits_response.status_code == 200:
@@ -122,7 +123,7 @@ def greet():
 
             repo_data.append(repo_info)
 
-        return render_template("github.html", username=username, repo_data=repo_data)
+        return render_template("github.html",username=username,repo_data=repo_data)
     else:
         return render_template(
             "github.html",
@@ -130,6 +131,7 @@ def greet():
             repo_data=[],
             error="User not found or has no repositories.",
         )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
