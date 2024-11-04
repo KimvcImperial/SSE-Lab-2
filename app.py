@@ -123,7 +123,11 @@ def greet():
 
             repo_data.append(repo_info)
 
-        return render_template("github.html", username=username, repo_data=repo_data)
+        return render_template(
+            "github.html",
+            username=username,
+            repo_data=repo_data
+        )
     else:
         return render_template(
             "github.html",
