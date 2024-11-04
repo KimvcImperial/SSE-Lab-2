@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Repos</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello {{ username }}!</h1>
+    <h2>Your Repositories:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Repository Name</th>
+                <th>Commit Hash</th>
+                <th>Author</th>
+                <th>Date</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for repo in repo_data %}
+                {% if repo.commits %}
+                    {% for commit in repo.commits %}
+                        <tr>
+                            {% if loop.first %}
+                                <td rowspan="{{ repo.commits|length }}">{{ repo.name }}</td>
+                            {% endif %}
+                            <td>{{ commit.hash }}</td>
+                            <td>{{ commit.author }}</td>
+                            <td>{{ commit.date }}</td>
+                            <td>{{ commit.message }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td>{{ repo.name }}</td>
+                        <td colspan="4">No commits found.</td>
+                    </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="5">No repositories found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
