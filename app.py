@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 # Existing is_prime and process_query functions
 
+
 def is_prime(n):
     """Returns True if n is a prime number, False otherwise."""
     if n <= 1:
@@ -133,30 +134,34 @@ def greet():
 
             if stats_response.status_code == 200:
                 repo_data_stats = stats_response.json()
-                repo_stats.append({
-                    "name": repo['name'],
-                    "stars": repo_data_stats.get('stargazers_count', 0),
-                    "forks": repo_data_stats.get('forks_count', 0),
-                    "watchers": repo_data_stats.get('watchers_count', 0),
-                    "language": repo_data_stats.get('language', 'N/A'),
-                    "open_issues": repo_data_stats.get('open_issues_count', 0)
-                })
+                repo_stats.append(
+                    {
+                        "name": repo["name"],
+                        "stars": repo_data_stats.get("stargazers_count", 0),
+                        "forks": repo_data_stats.get("forks_count", 0),
+                        "watchers": repo_data_stats.get("watchers_count", 0),
+                        "language": repo_data_stats.get("language", "N/A"),
+                        "open_issues": repo_data_stats.get("open_issues_count", 0),
+                    }
+                )
 
         # Sorting repositories by creation date to get the most recent
-        sorted_repos = sorted(repos, key=lambda x: x['created_at'], reverse=True)
+        sorted_repos = sorted(repos, key=lambda x: x["created_at"], reverse=True)
         for repo in sorted_repos[:5]:  # Get top 5 most recently created repos
-            recent_repos.append({
-                "name": repo["name"],
-                "created_at": repo["created_at"],
-                "url": repo["html_url"]
-            })
+            recent_repos.append(
+                {
+                    "name": repo["name"],
+                    "created_at": repo["created_at"],
+                    "url": repo["html_url"],
+                }
+            )
 
         return render_template(
-            "github.html", 
-            username=username, 
+            "github.html",
+            username=username,
             repo_data=repo_data,
             repo_stats=repo_stats,  # Pass repository stats to the template
-            recent_repos=recent_repos  # Pass recent repositories to the template
+            recent_repos=recent_repos,  # Pass recent repositories to the template
         )
     else:
         return render_template(
@@ -165,7 +170,7 @@ def greet():
             repo_data=[],
             repo_stats=[],
             recent_repos=[],
-            error="User not found or has no repositories."
+            error="User not found or has no repositories.",
         )
 
 
