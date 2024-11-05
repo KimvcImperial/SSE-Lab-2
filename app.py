@@ -142,12 +142,14 @@ def greet():
                         "forks": repo_data_stats.get("forks_count", 0),
                         "watchers": repo_data_stats.get("watchers_count", 0),
                         "language": repo_data_stats.get("language", "N/A"),
-                        "open_issues": repo_data_stats.get("open_issues_count", 0),
+                        "open_issues": repo_data_stats.get(
+                            "open_issues_count", 0),
                     }
                 )
 
         # Sorting repositories by creation date to get the most recent
-        sorted_repos = sorted(repos, key=lambda x: x["created_at"], reverse=True)
+        sorted_repos = sorted(
+            repos, key=lambda x: x["created_at"], reverse=True)
         for repo in sorted_repos[:5]:  # Get top 5 most recently created repos
             recent_repos.append(
                 {
@@ -163,8 +165,6 @@ def greet():
             repo_data=repo_data,
             repo_stats=repo_stats,  # Pass repository stats to the template
             recent_repos=recent_repos,
-            # Pass recent repositories 
-            #to the template
         )
     else:
         return render_template(
