@@ -4,6 +4,7 @@ import requests
 
 app = Flask(__name__)
 
+# Existing is_prime and process_query functions
 
 def is_prime(n):
     """Returns True if n is a prime number, False otherwise."""
@@ -102,13 +103,14 @@ def greet():
     if response.status_code == 200:
         repos = response.json()
         repo_data = []
+        repo_stats = []  # To store repository stats (stars, forks, etc.)
+        recent_repos = []  # To store most recently created repositories
 
         # Fetching commits for each repository
         for repo in repos:
             repo_info = {"name": repo["full_name"], "commits": []}
             commits_response = requests.get(
-                f"https://api.github.com/repos/{
-                    username}/{repo['name']}/commits"
+                f"https://api.github.com/repos/{username}/{repo['name']}/commits"
             )
 
             if commits_response.status_code == 200:
@@ -124,14 +126,46 @@ def greet():
 
             repo_data.append(repo_info)
 
+            # Fetching repository stats (stars, forks, watchers, etc.)
+            stats_response = requests.get(
+                f"https://api.github.com/repos/{username}/{repo['name']}"
+            )
+
+            if stats_response.status_code == 200:
+                repo_data_stats = stats_response.json()
+                repo_stats.append({
+                    "name": repo['name'],
+                    "stars": repo_data_stats.get('stargazers_count', 0),
+                    "forks": repo_data_stats.get('forks_count', 0),
+                    "watchers": repo_data_stats.get('watchers_count', 0),
+                    "language": repo_data_stats.get('language', 'N/A'),
+                    "open_issues": repo_data_stats.get('open_issues_count', 0)
+                })
+
+        # Sorting repositories by creation date to get the most recent
+        sorted_repos = sorted(repos, key=lambda x: x['created_at'], reverse=True)
+        for repo in sorted_repos[:5]:  # Get top 5 most recently created repos
+            recent_repos.append({
+                "name": repo["name"],
+                "created_at": repo["created_at"],
+                "url": repo["html_url"]
+            })
+
         return render_template(
-            "github.html", username=username, repo_data=repo_data)
+            "github.html", 
+            username=username, 
+            repo_data=repo_data,
+            repo_stats=repo_stats,  # Pass repository stats to the template
+            recent_repos=recent_repos  # Pass recent repositories to the template
+        )
     else:
         return render_template(
             "github.html",
             username=username,
             repo_data=[],
-            error="User not found or has no repositories.",
+            repo_stats=[],
+            recent_repos=[],
+            error="User not found or has no repositories."
         )
 
 
